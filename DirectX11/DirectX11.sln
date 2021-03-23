@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30204.135
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "01 DirectX11 Initialization", "01 DirectX11 Initialization\01 DirectX11 Initialization.vcxproj", "{7D474B1F-1A1D-4D42-86BD-A00A1F6A4914}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7D474B1F-1A1D-4D42-86BD-A00A1F6A4914}.Debug|x64.ActiveCfg = Debug|x64
+		{7D474B1F-1A1D-4D42-86BD-A00A1F6A4914}.Debug|x64.Build.0 = Debug|x64
+		{7D474B1F-1A1D-4D42-86BD-A00A1F6A4914}.Debug|x86.ActiveCfg = Debug|Win32
+		{7D474B1F-1A1D-4D42-86BD-A00A1F6A4914}.Debug|x86.Build.0 = Debug|Win32
+		{7D474B1F-1A1D-4D42-86BD-A00A1F6A4914}.Release|x64.ActiveCfg = Release|x64
+		{7D474B1F-1A1D-4D42-86BD-A00A1F6A4914}.Release|x64.Build.0 = Release|x64
+		{7D474B1F-1A1D-4D42-86BD-A00A1F6A4914}.Release|x86.ActiveCfg = Release|Win32
+		{7D474B1F-1A1D-4D42-86BD-A00A1F6A4914}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C8369D19-E110-4011-86BC-E8E3FBD1F4B1}
+	EndGlobalSection
+EndGlobal

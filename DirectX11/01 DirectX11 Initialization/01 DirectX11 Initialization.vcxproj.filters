@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="着色器">
+      <UniqueIdentifier>{b92b1a04-f6d7-47be-a3d0-7cd803bc4cd2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="d3dApp.h">
@@ -50,5 +53,16 @@
     <ClCompile Include="GameTimer.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="HLSL\Header.hlsli">
+      <Filter>着色器</Filter>
+    </None>
+    <None Include="HLSL\VertexShader.hlsl">
+      <Filter>着色器</Filter>
+    </None>
+    <None Include="HLSL\PixelShader.hlsl">
+      <Filter>着色器</Filter>
+    </None>
   </ItemGroup>
 </Project>

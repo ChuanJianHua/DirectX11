@@ -10,3 +10,10 @@ struct VertexOut
     float4 posH : SV_POSITION;
     float4 color : COLOR;
 };
+
+cbuffer CConsantBUffer : register(b0)
+{
+    matrix g_World;
+    matrix g_View;
+    matrix g_Proj;
+}

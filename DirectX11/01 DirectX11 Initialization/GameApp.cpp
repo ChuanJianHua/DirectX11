@@ -47,7 +47,7 @@ void GameApp::DrawScene()
 	m_pd3dImmediateContext->ClearRenderTargetView(m_pRenderTargetView.Get(), black);
 	m_pd3dImmediateContext->ClearDepthStencilView(m_pDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 	// 绘制三角形
-	m_pd3dImmediateContext->Draw(3, 0);
+	m_pd3dImmediateContext->Draw(8, 0);
 	HR(m_pSwapChain->Present(0, 0));
 }
 
@@ -75,9 +75,36 @@ bool GameApp::InitResource()
 	// 设置三角形顶点
 	Vertex1 vertices[] =
 	{
-		{ XMFLOAT3(0.0f, 0.5f, 0.5f), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f) },
-		{ XMFLOAT3(0.5f, -0.5f, 0.5f), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f) },
-		{ XMFLOAT3(-0.5f, -0.5f, 0.5f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f) }
+		{ XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) },
+		{ XMFLOAT3(-1.0f, 1.0f, -1.0f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f) },
+		{ XMFLOAT3(1.0f, 1.0f, -1.0f), XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f) },
+		{ XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f) },
+		{ XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f) },
+		{ XMFLOAT3(-1.0f, 1.0f, 1.0f), XMFLOAT4(1.0f, 0.0f, 1.0f, 1.0f) },
+		{ XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
+		{ XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT4(0.0f, 1.0f, 1.0f, 1.0f) }
+	};
+
+	// 索引数组
+	DWORD indices[] = {
+		// 正面
+		0, 1, 2,
+		2, 3, 0,
+		// 左面
+		4, 5, 1,
+		1, 0, 4,
+		// 顶面
+		1, 5, 6,
+		6, 2, 1,
+		// 背面
+		7, 6, 5,
+		5, 4, 7,
+		// 右面
+		3, 2, 6,
+		6, 7, 3,
+		// 底面
+		4, 0, 3,
+		3, 7, 4
 	};
 
 	// 设置顶点缓冲区描述
@@ -93,13 +120,37 @@ bool GameApp::InitResource()
 	initData.pSysMem = vertices;
 	HR(m_pd3dDevice->CreateBuffer(&vbd, &initData, m_pVertexBuffer.GetAddressOf()));
 
+	// 设置顶点缓冲区描述
+	D3D11_BUFFER_DESC ibd;
+	ZeroMemory(&ibd, sizeof(ibd));
+	ibd.Usage = D3D11_USAGE_IMMUTABLE;
+	ibd.ByteWidth = sizeof vertices;
+	ibd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	ibd.CPUAccessFlags = 0;
+	// 新建索引缓冲区
+	initData.pSysMem = indices;
+	HR(m_pd3dDevice->CreateBuffer(&ibd, &initData, m_pVertexBuffer.GetAddressOf()));
+
+	//设置常量缓冲区
+	D3D11_BUFFER_DESC cbd;
+	ZeroMemory(&ibd, sizeof(cbd));
+	cbd.Usage = D3D11_USAGE_DYNAMIC;
+	cbd.ByteWidth = sizeof(ConstantBuffer);
+	cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	cbd.CPUAccessFlags = D3D10_CPU_ACCESS_WRITE;
+	// 新建索引缓冲区	
+	initData.pSysMem = indices;
+	HR(m_pd3dDevice->CreateBuffer(&cbd, nullptr, m_pIndexBuffer.GetAddressOf()));
+
+
 	// ******************
 	// 给渲染管线各个阶段绑定好所需资源
 
 	// 输入装配阶段的顶点缓冲区设置
 	UINT stride = sizeof(Vertex1);	// 跨越字节数
-	UINT offset = 0;				// 起始偏移量
+	UINT offset = 0;				// 起始偏移量	
 
+	m_pd3dImmediateContext->IASetIndexBuffer(m_pIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 	m_pd3dImmediateContext->IASetVertexBuffers(0, 1, m_pVertexBuffer.GetAddressOf(), &stride, &offset);
 	// 设置图元类型，设定输入布局
 	m_pd3dImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);

@@ -1,9 +1,11 @@
 #include "Header.hlsli"
 
-VertexOut VS(VertexIn pIn)
+VertexOut VS(VertexIn vIn)
 {
-    VertexOut pOut;
-    pOut.posH = float4(pIn.pos, 1.0f);
-    pOut.color = pIn.color;
-    return pOut;
+    VertexOut vOut;
+    vOut.posH = mul(float4(vIn.pos, 1.0f), g_World);
+    vOut.posH = mul(vOut.posH, g_View);
+    vOut.posH = mul(vOut.posH, g_Proj);
+    vOut.color = vIn.color;
+    return vOut;
 }

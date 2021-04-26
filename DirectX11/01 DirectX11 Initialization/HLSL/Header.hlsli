@@ -11,7 +11,7 @@ struct VertexOut
     float4 color : COLOR;
 };
 
-cbuffer CConsantBUffer : register(b0)
+cbuffer ConsantBuffer : register(b0)
 {
     matrix g_World;
     matrix g_View;

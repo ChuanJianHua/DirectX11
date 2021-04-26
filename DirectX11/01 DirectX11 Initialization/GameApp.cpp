@@ -93,7 +93,7 @@ bool GameApp::InitResource()
 	};
 
 	// 索引数组
-	DWORD indices[] = {
+	WORD indices[] = {
 		// 正面
 		0, 1, 2,
 		2, 3, 0,

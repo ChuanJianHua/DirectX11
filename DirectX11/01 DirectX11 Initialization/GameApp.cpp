@@ -120,7 +120,7 @@ bool GameApp::InitResource()
 	initData.pSysMem = vertices;
 	HR(m_pd3dDevice->CreateBuffer(&vbd, &initData, m_pVertexBuffer.GetAddressOf()));
 
-	// 设置顶点缓冲区描述
+	// 设置索引缓冲区描述
 	D3D11_BUFFER_DESC ibd;
 	ZeroMemory(&ibd, sizeof(ibd));
 	ibd.Usage = D3D11_USAGE_IMMUTABLE;
@@ -130,19 +130,29 @@ bool GameApp::InitResource()
 	// 新建索引缓冲区
 	initData.pSysMem = indices;
 	HR(m_pd3dDevice->CreateBuffer(&ibd, &initData, m_pVertexBuffer.GetAddressOf()));
+	// 输入装配阶段的索引缓冲区设置
+	m_pd3dImmediateContext->IASetIndexBuffer(m_pIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 
-	//设置常量缓冲区
+	//设置常量缓冲区描述
 	D3D11_BUFFER_DESC cbd;
 	ZeroMemory(&ibd, sizeof(cbd));
 	cbd.Usage = D3D11_USAGE_DYNAMIC;
 	cbd.ByteWidth = sizeof(ConstantBuffer);
 	cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	cbd.CPUAccessFlags = D3D10_CPU_ACCESS_WRITE;
-	// 新建索引缓冲区	
+	// 新建常量缓冲区	
 	initData.pSysMem = indices;
-	HR(m_pd3dDevice->CreateBuffer(&cbd, nullptr, m_pIndexBuffer.GetAddressOf()));
+	HR(m_pd3dDevice->CreateBuffer(&cbd, nullptr, m_pConstantBuffer.GetAddressOf()));
 
+	m_CBuffer.world = XMMatrixIdentity();
+	m_CBuffer.view = XMMatrixTranspose(XMMatrixLookAtLH(
+		XMVectorSet(0.0f, 0.0f, -5.0f, 0.0f),
+		XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f),
+		XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f)
+	));
+	m_CBuffer.proj = XMMatrixTranspose(XMMatrixPerspectiveFovLH(XM_PIDIV2, AspectRatio(), 1.0f, 1000.0f));
 
+	
 	// ******************
 	// 给渲染管线各个阶段绑定好所需资源
 
@@ -150,7 +160,6 @@ bool GameApp::InitResource()
 	UINT stride = sizeof(Vertex1);	// 跨越字节数
 	UINT offset = 0;				// 起始偏移量	
 
-	m_pd3dImmediateContext->IASetIndexBuffer(m_pIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 	m_pd3dImmediateContext->IASetVertexBuffers(0, 1, m_pVertexBuffer.GetAddressOf(), &stride, &offset);
 	// 设置图元类型，设定输入布局
 	m_pd3dImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);

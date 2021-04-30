@@ -20,12 +20,17 @@ GameApp::~GameApp()
 
 bool GameApp::Init()
 {
+
 	if (!D3DApp::Init())
 		return false;
 	if (!InitEffect())
 		return false;
 	if (!InitResource())
 		return false;
+	// 初始化鼠标
+	m_pMouse->SetWindow(m_hMainWnd);
+	m_pMouse->SetMode(DirectX::Mouse::MODE_ABSOLUTE);
+
 	return true;
 }
 
@@ -36,14 +41,38 @@ void GameApp::OnResize()
 
 void GameApp::UpdateScene(float dt)
 {
-	static float phi = 0.0f, theta = 0.0f;
-	phi += 0.00003f, theta += 0.00005f;
-	m_CBuffer.world = XMMatrixTranspose(XMMatrixRotationX(phi) * XMMatrixRotationY(theta));
+	static float phi = 0.0f, theta = 0.0f, x = 0.0f, y = 0.0f;
+	auto mouseState = m_pMouse->GetState();
+	auto lastMouseState = m_MouseTracker.GetLastState();
+
+	auto keyState = m_pKeyboard->GetState();
+	auto lastKeyboardState = m_KeyboardTracker.GetLastState();
+
+	m_MouseTracker.Update(mouseState);
+	m_KeyboardTracker.Update(keyState);
+
+	if (mouseState.leftButton == true && m_MouseTracker.leftButton == m_MouseTracker.HELD)
+	{
+		theta -= (mouseState.x - lastMouseState.x) * 0.01f;
+		phi -= (mouseState.y - lastMouseState.y) * 0.01f;
+	}
+	if (keyState.IsKeyDown(Keyboard::W))
+		y += dt; 
+	if (keyState.IsKeyDown(Keyboard::S))
+		y -= dt;
+	if (keyState.IsKeyDown(Keyboard::A))
+		x -= dt;
+	if (keyState.IsKeyDown(Keyboard::D))
+		x += dt;
+	
+	m_CBuffer.world = XMMatrixTranspose(XMMatrixRotationX(phi)* XMMatrixRotationY(theta) * XMMatrixTranslation(x, y, 0));
+	
 	// 更新常量缓冲区，让立方体转起来
 	D3D11_MAPPED_SUBRESOURCE mappedData;
 	HR(m_pd3dImmediateContext->Map(m_pConstantBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedData));
 	memcpy_s(mappedData.pData, sizeof(m_CBuffer), &m_CBuffer, sizeof(m_CBuffer));
 	m_pd3dImmediateContext->Unmap(m_pConstantBuffer.Get(), 0);
+
 }
 
 void GameApp::DrawScene()

@@ -112,6 +112,8 @@ bool D3DApp::Init()
 	if (!InitDirect3D())
 		return false;
 
+	m_pMouse->SetWindow(m_hMainWnd);
+	m_pMouse->SetMode(DirectX::Mouse::MODE_ABSOLUTE);
 	return true;
 }
 
@@ -298,16 +300,34 @@ LRESULT D3DApp::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		((MINMAXINFO*)lParam)->ptMinTrackSize.x = 200;
 		((MINMAXINFO*)lParam)->ptMinTrackSize.y = 200;
 		return 0;
+	//ÊäÈë
+	case WM_INPUT:
 
 	case WM_LBUTTONDOWN:
 	case WM_MBUTTONDOWN:
 	case WM_RBUTTONDOWN:
-		return 0;
+	case WM_XBUTTONDOWN:
+	
 	case WM_LBUTTONUP:
 	case WM_MBUTTONUP:
 	case WM_RBUTTONUP:
-		return 0;
+	case WM_XBUTTONUP:
+	
+	case WM_MOUSEWHEEL:
+	case WM_MOUSEHOVER:
 	case WM_MOUSEMOVE:
+	case WM_MOUSELEAVE:
+		m_pMouse->ProcessMessage(msg, wParam, lParam);
+		return 0;
+	case WM_KEYDOWN:
+	case WM_SYSKEYDOWN:
+	case WM_KEYUP:
+	case WM_SYSKEYUP:
+		m_pKeyboard->ProcessMessage(msg, wParam, lParam);
+		return 0;
+	case WM_ACTIVATEAPP:
+		m_pMouse->ProcessMessage(msg, wParam, lParam);
+		m_pKeyboard->ProcessMessage(msg, wParam, lParam);
 		return 0;
 	}
 

@@ -11,11 +11,11 @@ HRESULT CreateShaderFromFile(
 {
     HRESULT hr = S_OK;
 
-    if (csoFileNameInOut && exists(csoFileNameInOut))
-    {
-        return D3DReadFileToBlob(csoFileNameInOut, ppBlobOut);
-    }
-    else 
+    //if (csoFileNameInOut && exists(csoFileNameInOut))
+    //{
+    //    return D3DReadFileToBlob(csoFileNameInOut, ppBlobOut);
+    //}
+    //else 
     {
         DWORD dwShaderFlags = D3DCOMPILE_ENABLE_STRICTNESS;
 #ifdef _DEBUG
@@ -41,7 +41,7 @@ HRESULT CreateShaderFromFile(
 
         if (csoFileNameInOut)
         {
-            return D3DWriteBlobToFile(*ppBlobOut, csoFileNameInOut, false);
+            return D3DWriteBlobToFile(*ppBlobOut, csoFileNameInOut, true);
         }
     }
     return hr;

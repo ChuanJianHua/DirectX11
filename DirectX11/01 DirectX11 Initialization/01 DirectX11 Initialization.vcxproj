@@ -120,6 +120,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -134,6 +135,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -148,8 +150,11 @@
     <ClInclude Include="DXTrace.h" />
     <ClInclude Include="GameApp.h" />
     <ClInclude Include="GameTimer.h" />
+    <ClInclude Include="Geometry.h" />
     <ClInclude Include="Keyboard.h" />
+    <ClInclude Include="LightHelper.h" />
     <ClInclude Include="Mouse.h" />
+    <ClInclude Include="Vertex.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="d3dApp.cpp" />
@@ -157,9 +162,11 @@
     <ClCompile Include="DXTrace.cpp" />
     <ClCompile Include="GameApp.cpp" />
     <ClCompile Include="GameTimer.cpp" />
+    <ClCompile Include="Geometry.cpp" />
     <ClCompile Include="Keyboard.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Mouse.cpp" />
+    <ClCompile Include="Vertex.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="HLSL\PixelShader.hlsl">
@@ -176,6 +183,8 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <FileType>Document</FileType>
     </None>
+    <None Include="Light.hlsli" />
+    <None Include="Lighting.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <None Include="HLSL\Header.hlsli" />

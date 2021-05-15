@@ -1,4 +1,4 @@
-#include "Light.hlsli"
+#include "Lighting.hlsli"
 
 struct VertexIn
 {
@@ -11,6 +11,7 @@ struct VertexIn
 struct VertexOut
 {
     float4 posH : SV_POSITION;
+    float3 posW : POSITIONT;
     float3 normal : NORMAL;
     float4 color : COLOR;
 };

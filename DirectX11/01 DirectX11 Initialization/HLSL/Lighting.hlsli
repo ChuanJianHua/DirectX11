@@ -11,13 +11,13 @@ void ComputeDirectionalLight(DirectionalLight light, Material material, float3 n
     float3 lightDir = light.Direction;
     ambient = light.Ambient * material.Ambient;
     
-    float diffuseFactor = dot(lightDir, normal);
+    float diffuseFactor = dot(-lightDir, normal);
     [flatten]    
     if (diffuseFactor > 0.0f)
     {
-        diffuse = light.Diffuse * material.Diffuse * dot(normal, lightDir);
-        float3 reflect = reflect(lightDir, normal);
-        float specularFactor = light.Specular * pow(max(dot(reflect, toEye), 0.0f), material.Specular.w);
+        diffuse = light.Diffuse * material.Diffuse * diffuseFactor;
+        float3 reflectDir = reflect(lightDir, normal);
+        float specularFactor = pow(max(dot(reflectDir, toEye), 0.0f), material.Specular.w);
         specular = material.Specular * light.Specular * specularFactor;
     }
 }

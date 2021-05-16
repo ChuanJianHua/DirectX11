@@ -60,8 +60,9 @@ void GameApp::UpdateScene(float dt)
 		x -= dt;
 	if (keyState.IsKeyDown(Keyboard::D))
 		x += dt;
-	
-	m_VSConstantBuffer.world = XMMatrixTranspose(XMMatrixRotationY(theta) * XMMatrixRotationX(phi) * XMMatrixTranslation(x, y, 0));
+	XMMATRIX w = XMMatrixRotationY(theta)* XMMatrixRotationX(phi)* XMMatrixTranslation(x, y, 0);
+	m_VSConstantBuffer.world = XMMatrixTranspose(w);
+	m_VSConstantBuffer.worldInvTranspose = XMMatrixInverse(nullptr, w);
 	
 	
 	// 更新常量缓冲区，让立方体转起来
@@ -166,6 +167,17 @@ bool GameApp::InitResource()
 	// 注意不要忘记设置此处的观察位置，否则高亮部分会有问题
 	m_PSConstantBuffer.eyePos = XMFLOAT4(0.0f, 0.0f, -5.0f, 0.0f);
 
+	// ******************
+	// 初始化光栅化状态
+	//
+	D3D11_RASTERIZER_DESC rasterizerDesc;
+	ZeroMemory(&rasterizerDesc, sizeof(rasterizerDesc));
+	rasterizerDesc.FillMode = D3D11_FILL_WIREFRAME;
+	rasterizerDesc.CullMode = D3D11_CULL_NONE;
+	rasterizerDesc.FrontCounterClockwise = false;
+	rasterizerDesc.DepthClipEnable = true;
+	HR(m_pd3dDevice->CreateRasterizerState(&rasterizerDesc, m_pRSWireframe.GetAddressOf()));
+	m_pd3dImmediateContext->RSSetState(m_pRSWireframe.Get());
 	
 	// ******************
 	// 给渲染管线各个阶段绑定好所需资源
@@ -176,7 +188,7 @@ bool GameApp::InitResource()
 
 	// 将更新好的常量缓冲区绑定到顶点着色器
 	m_pd3dImmediateContext->VSSetConstantBuffers(0, 1, m_pConstantBuffer[0].GetAddressOf());
-	m_pd3dImmediateContext->PSSetConstantBuffers(0, 1, m_pConstantBuffer[1].GetAddressOf());
+	m_pd3dImmediateContext->PSSetConstantBuffers(1, 1, m_pConstantBuffer[1].GetAddressOf());
 
 	// 将着色器绑定到渲染管线
 	m_pd3dImmediateContext->VSSetShader(m_pVertexShader.Get(), nullptr, 0);

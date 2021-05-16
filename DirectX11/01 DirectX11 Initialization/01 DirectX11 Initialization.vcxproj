@@ -169,6 +169,8 @@
     <ClCompile Include="Vertex.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="HLSL\Light.hlsli" />
+    <None Include="HLSL\Lighting.hlsli" />
     <None Include="HLSL\PixelShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
@@ -183,8 +185,6 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <FileType>Document</FileType>
     </None>
-    <None Include="Light.hlsli" />
-    <None Include="Lighting.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <None Include="HLSL\Header.hlsli" />

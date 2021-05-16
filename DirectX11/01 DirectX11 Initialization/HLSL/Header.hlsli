@@ -3,7 +3,7 @@
 struct VertexIn
 {
     float3 pos : POSITION;
-    float3 normal : NORMAL;
+    float3 normalL : NORMAL;
     float4 color : COLOR;
 };
 
@@ -12,7 +12,7 @@ struct VertexOut
 {
     float4 posH : SV_POSITION;
     float3 posW : POSITIONT;
-    float3 normal : NORMAL;
+    float3 normalW : NORMAL;
     float4 color : COLOR;
 };
 

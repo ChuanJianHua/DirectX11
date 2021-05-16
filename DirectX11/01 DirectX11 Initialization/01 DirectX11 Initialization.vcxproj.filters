@@ -91,10 +91,10 @@
     <None Include="HLSL\PixelShader.hlsl">
       <Filter>着色器</Filter>
     </None>
-    <None Include="Light.hlsli">
+    <None Include="HLSL\Light.hlsli">
       <Filter>着色器</Filter>
     </None>
-    <None Include="Lighting.hlsli">
+    <None Include="HLSL\Lighting.hlsli">
       <Filter>着色器</Filter>
     </None>
   </ItemGroup>

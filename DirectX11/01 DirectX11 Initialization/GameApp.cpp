@@ -2,6 +2,8 @@
 #include "d3dUtil.h"
 #include "DXTrace.h"
 #include "Geometry.h"
+#include "DDSTextureLoader.h"
+#include "WICTextureLoader.h"
 using namespace DirectX;
 using namespace std::filesystem;
 
@@ -60,7 +62,28 @@ void GameApp::UpdateScene(float dt)
 		x -= dt;
 	if (keyState.IsKeyDown(Keyboard::D))
 		x += dt;
-	XMMATRIX w = XMMatrixRotationY(theta)* XMMatrixRotationX(phi)* XMMatrixTranslation(x, y, 0);
+	if (keyState.IsKeyDown(Keyboard::F1))
+	{
+		m_PSConstantBuffer.dirLight = m_DirLight;
+		m_PSConstantBuffer.pointLight = PointLight();
+		m_PSConstantBuffer.spotLight = SpotLight();
+	}
+
+	if (keyState.IsKeyDown(Keyboard::F2))
+	{
+		m_PSConstantBuffer.dirLight = DirectionalLight();
+		m_PSConstantBuffer.pointLight = m_PointLight;
+		m_PSConstantBuffer.spotLight = SpotLight();
+	}
+
+	if (keyState.IsKeyDown(Keyboard::F3))
+	{
+		m_PSConstantBuffer.dirLight = DirectionalLight();
+		m_PSConstantBuffer.pointLight = PointLight();
+		m_PSConstantBuffer.spotLight = m_SpotLight;
+	}
+
+	XMMATRIX w = XMMatrixRotationY(theta)* XMMatrixRotationX(phi) * XMMatrixTranslation(x, y, 0);
 	m_VSConstantBuffer.world = XMMatrixTranspose(w);
 	m_VSConstantBuffer.worldInvTranspose = XMMatrixInverse(nullptr, w);
 	
@@ -97,7 +120,7 @@ bool GameApp::InitEffect()
 	HR(m_pd3dDevice->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, m_pVertexShader.GetAddressOf()));
 
 	//创建并绑定定点布局
-	HR(m_pd3dDevice->CreateInputLayout(VertexPosNormalColor::inputLayout, ARRAYSIZE(VertexPosNormalColor::inputLayout), blob->GetBufferPointer(),
+	HR(m_pd3dDevice->CreateInputLayout(VertexPosNormalColorTex::inputLayout, ARRAYSIZE(VertexPosNormalColorTex::inputLayout), blob->GetBufferPointer(),
 		blob->GetBufferSize(), m_pVertexLayout.GetAddressOf()));
 
 	//创建像素着色器
@@ -110,7 +133,7 @@ bool GameApp::InitEffect()
 bool GameApp::InitResource()
 {
 	// 设置三角形顶点
-	auto mesh = Geometry::CreateBox<VertexPosNormalColor>();
+	auto mesh = Geometry::CreateBox<VertexPosNormalColorTex>();
 	SetMash(mesh);
 
 	//设置常量缓冲区描述
@@ -155,6 +178,7 @@ bool GameApp::InitResource()
 		XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f),
 		XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f)
 	));
+	//m_VSConstantBuffer.proj = XMMatrixTranspose(XMMatrixOrthographicLH(m_ClientWidth, m_ClientHeight, 1.0f, 1000.0f));
 	m_VSConstantBuffer.proj = XMMatrixTranspose(XMMatrixPerspectiveFovLH(XM_PIDIV2, AspectRatio(), 1.0f, 1000.0f));
 	m_VSConstantBuffer.worldInvTranspose = XMMatrixIdentity();
 
@@ -164,9 +188,30 @@ bool GameApp::InitResource()
 	m_PSConstantBuffer.material.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 5.0f);
 	// 使用默认平行光
 	m_PSConstantBuffer.dirLight = m_DirLight;
+	//m_PSConstantBuffer.pointLight = m_PointLight;
+	//m_PSConstantBuffer.spotLight = m_SpotLight;
 	// 注意不要忘记设置此处的观察位置，否则高亮部分会有问题
 	m_PSConstantBuffer.eyePos = XMFLOAT4(0.0f, 0.0f, -5.0f, 0.0f);
 
+	//初始化纹理
+	HR(CreateDDSTextureFromFile(m_pd3dDevice.Get(), L"Texture\\WoodCrate.dds",
+		nullptr, m_pTexture.GetAddressOf()));
+	//绑定贴图
+	m_pd3dImmediateContext->PSSetShaderResources(0, 1, m_pTexture.GetAddressOf());
+
+	D3D11_SAMPLER_DESC samplerDesc;
+	ZeroMemory(&samplerDesc, sizeof(D3D11_SAMPLER_DESC));
+	samplerDesc.Filter = D3D11_FILTER_ANISOTROPIC;
+	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+	samplerDesc.MipLODBias = 0;
+	samplerDesc.MinLOD = 0;
+	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+	HR(m_pd3dDevice->CreateSamplerState(&samplerDesc, m_pSamperState.GetAddressOf()));
+
+	m_pd3dImmediateContext->PSSetSamplers(0, 1, m_pSamperState.GetAddressOf());
 	// ******************
 	// 初始化光栅化状态
 	//
@@ -177,7 +222,7 @@ bool GameApp::InitResource()
 	rasterizerDesc.FrontCounterClockwise = false;
 	rasterizerDesc.DepthClipEnable = true;
 	HR(m_pd3dDevice->CreateRasterizerState(&rasterizerDesc, m_pRSWireframe.GetAddressOf()));
-	m_pd3dImmediateContext->RSSetState(m_pRSWireframe.Get());
+	//m_pd3dImmediateContext->RSSetState(m_pRSWireframe.Get());
 	
 	// ******************
 	// 给渲染管线各个阶段绑定好所需资源
@@ -190,6 +235,8 @@ bool GameApp::InitResource()
 	m_pd3dImmediateContext->VSSetConstantBuffers(0, 1, m_pConstantBuffer[0].GetAddressOf());
 	m_pd3dImmediateContext->PSSetConstantBuffers(1, 1, m_pConstantBuffer[1].GetAddressOf());
 
+
+
 	// 将着色器绑定到渲染管线
 	m_pd3dImmediateContext->VSSetShader(m_pVertexShader.Get(), nullptr, 0);
 	m_pd3dImmediateContext->PSSetShader(m_pPixelShader.Get(), nullptr, 0);
@@ -197,7 +244,7 @@ bool GameApp::InitResource()
 	return true;
 }
 
-bool GameApp::SetMash(const Geometry::MeshData<VertexPosNormalColor>& meshData)
+bool GameApp::SetMash(const Geometry::MeshData<VertexPosNormalColorTex>& meshData)
 {
 	m_pVertexBuffer.Reset();
 	m_pIndexBuffer.Reset();
@@ -206,7 +253,7 @@ bool GameApp::SetMash(const Geometry::MeshData<VertexPosNormalColor>& meshData)
 	D3D11_BUFFER_DESC vbd;
 	ZeroMemory(&vbd, sizeof(vbd));
 	vbd.Usage = D3D11_USAGE_IMMUTABLE;
-	vbd.ByteWidth = meshData.vertexVec.size() * sizeof(VertexPosNormalColor);
+	vbd.ByteWidth = meshData.vertexVec.size() * sizeof(VertexPosNormalColorTex);
 	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vbd.CPUAccessFlags = 0;
 	// 新建顶点缓冲区
@@ -216,7 +263,7 @@ bool GameApp::SetMash(const Geometry::MeshData<VertexPosNormalColor>& meshData)
 	HR(m_pd3dDevice->CreateBuffer(&vbd, &initData, m_pVertexBuffer.GetAddressOf()));
 
 	// 输入装配阶段的顶点缓冲区设置
-	UINT stride = sizeof(VertexPosNormalColor);	// 跨越字节数
+	UINT stride = sizeof(VertexPosNormalColorTex);	// 跨越字节数
 	UINT offset = 0;							// 起始偏移量
 
 	m_pd3dImmediateContext->IASetVertexBuffers(0, 1, m_pVertexBuffer.GetAddressOf(), &stride, &offset);

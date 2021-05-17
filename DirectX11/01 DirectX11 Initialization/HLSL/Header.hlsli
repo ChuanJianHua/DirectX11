@@ -1,10 +1,14 @@
 #include "Lighting.hlsli"
 
+Texture2D gTex : register(t0);
+SamplerState gSampler : register(s0);
+
 struct VertexIn
 {
     float3 pos : POSITION;
     float3 normalL : NORMAL;
     float4 color : COLOR;
+    float2 tex : TEXCOORD;
 };
 
 
@@ -14,6 +18,7 @@ struct VertexOut
     float3 posW : POSITIONT;
     float3 normalW : NORMAL;
     float4 color : COLOR;
+    float2 tex : TEXCOORD;
 };
 
 cbuffer VSConsantBuffer : register(b0)

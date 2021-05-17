@@ -9,5 +9,6 @@ VertexOut VS(VertexIn vIn)
     vOut.posH = mul(vOut.posH, g_Proj);
     vOut.normalW = mul(vIn.normalL, (float3x3)g_WorldInvTranspose);
     vOut.color = vIn.color;
+    vOut.tex = vIn.tex;
     return vOut;
 }

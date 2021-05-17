@@ -37,7 +37,7 @@ public:
 private:
 	bool InitEffect();
 	bool InitResource();
-	bool SetMash(const Geometry::MeshData<VertexPosNormalColor>& meshData);
+	bool SetMash(const Geometry::MeshData<VertexPosNormalColorTex>& meshData);
 
 
 private:
@@ -45,8 +45,10 @@ private:
 	ComPtr<ID3D11Buffer> m_pIndexBuffer;		 // 索引缓冲区
 	ComPtr<ID3D11Buffer> m_pConstantBuffer[2];	 // 常量缓冲区
 	ComPtr<ID3D11Buffer> m_pVertexBuffer;		 // 顶点缓冲区
+	ComPtr<ID3D11ShaderResourceView> m_pTexture; // 贴图resourceView
+	ComPtr<ID3D11SamplerState> m_pSamperState;	 // 贴图sampler
+	ComPtr<ID3D11RasterizerState> m_pRSWireframe;// RasterizerState
 	UINT m_IndexCount;							 // 顶点数量
-	ComPtr<ID3D11RasterizerState> m_pRSWireframe; // RasterizerState
 
 	ComPtr<ID3D11VertexShader> m_pVertexShader;	 // 顶点着色器
 	ComPtr<ID3D11PixelShader> m_pPixelShader;	 // 像素着色器

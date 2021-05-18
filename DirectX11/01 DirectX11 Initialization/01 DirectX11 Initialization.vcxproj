@@ -150,6 +150,7 @@
     <ClInclude Include="DDSTextureLoader.h" />
     <ClInclude Include="DXTrace.h" />
     <ClInclude Include="GameApp.h" />
+    <ClInclude Include="GameObject.h" />
     <ClInclude Include="GameTimer.h" />
     <ClInclude Include="Geometry.h" />
     <ClInclude Include="Keyboard.h" />
@@ -164,6 +165,7 @@
     <ClCompile Include="DDSTextureLoader.cpp" />
     <ClCompile Include="DXTrace.cpp" />
     <ClCompile Include="GameApp.cpp" />
+    <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GameTimer.cpp" />
     <ClCompile Include="Geometry.cpp" />
     <ClCompile Include="Keyboard.cpp" />

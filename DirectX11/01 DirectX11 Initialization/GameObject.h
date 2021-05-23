@@ -2,6 +2,9 @@
 #define GAMEOBJECT_H
 #include <string>
 #include <DirectXMath.h>
+#include <memory>
+#include "Mesh.h"
+
 class Gameobject
 {
 public:
